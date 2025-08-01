@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Room Guardian Dashboard</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    .metric {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+    span.value {
+      font-weight: bold;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Room Guardian Dashboard</h1>
+  <div class="card">
+    <div class="metric">📏 Distance: <span id="distance" class="value">Loading...</span> cm</div>
+    <div class="metric">🌡️ Temperature: <span id="temperature" class="value">Loading...</span> °C</div>
+    <div class="metric">💧 Humidity: <span id="humidity" class="value">Loading...</span> %</div>
+    <div class="metric">💡 Light Condition: <span id="lightcondition" class="value">Loading...</span></div>
+    <div class="metric">🔎 LDR Raw: <span id="ldrraw" class="value">Loading...</span></div>
+    <div class="metric">📈 LDR Percent: <span id="ldrpercent" class="value">Loading...</span> %</div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZ1pNJfoR3PU0Ngk_Bfg_MFGiS0jjMh6Y",
+      authDomain: "roomgaurdianv2.firebaseapp.com",
+      databaseURL: "https://roomgaurdianv2-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "roomgaurdianv2",
+      storageBucket: "roomgaurdianv2.appspot.com",
+      messagingSenderId: "496136929714",
+      appId: "1:496136929714:web:99f1fded9812ccf3bae4ab"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const roomGuardianRef = ref(db, 'RoomGuardian');
+
+    onValue(roomGuardianRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        document.getElementById("distance").innerText = data.Distance;
+        document.getElementById("temperature").innerText = data.Temperature;
+        document.getElementById("humidity").innerText = data.Humidity;
+        document.getElementById("lightcondition").innerText = data.LightCondition;
+        document.getElementById("ldrraw").innerText = data.LDR_Raw;
+        document.getElementById("ldrpercent").innerText = data.LDR_Percent;
+      } else {
+        console.log("No data available");
+      }
+    });
+  </script>
+</body>
+</html>
