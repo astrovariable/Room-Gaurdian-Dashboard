@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Room Guardian Dashboard</title>
   <meta charset="UTF-8" />
@@ -15,6 +15,7 @@
     h1 {
       text-align: center;
       font-size: 1.8em;
+      margin-bottom: 20px;
     }
 
     .card {
@@ -22,14 +23,19 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin: 20px auto;
+      margin: 0 auto;
       max-width: 400px;
-      transition: background 0.3s ease;
     }
 
     .metric {
       font-size: 1.1em;
       margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    span.label {
+      color: #333;
     }
 
     span.value {
@@ -37,21 +43,22 @@
       color: #007bff;
     }
 
-    .alert {
-      background: #fff3cd;
-    }
-
-    .high-alert {
-      background: #f8d7da;
-    }
-
     @media (max-width: 500px) {
       .card {
-        padding: 15px;
+        padding: 16px;
       }
+
       .metric {
         font-size: 1em;
+        flex-direction: column;
+        align-items: flex-start;
       }
+
+      .metric span.value {
+        margin-top: 4px;
+        font-size: 1.1em;
+      }
+
       h1 {
         font-size: 1.5em;
       }
@@ -60,13 +67,13 @@
 </head>
 <body>
   <h1>Room Guardian Dashboard</h1>
-  <div class="card" id="dashboardCard">
-    <div class="metric">📏 Proximity: <span id="distance" class="value">Loading...</span> cm</div>
-    <div class="metric">🌡️ Temperature: <span id="temperature" class="value">Loading...</span> °C</div>
-    <div class="metric">💧 Humidity: <span id="humidity" class="value">Loading...</span> %</div>
-    <div class="metric">💡 Light Condition: <span id="lightcondition" class="value">Loading...</span></div>
-    <div class="metric">🔎 Light Sensor Raw: <span id="ldrraw" class="value">Loading...</span></div>
-    <div class="metric">📈 Light Percentage: <span id="ldrpercent" class="value">Loading...</span> %</div>
+  <div class="card">
+    <div class="metric"><span class="label">📏 Proximity:</span> <span id="distance" class="value">Loading...</span> cm</div>
+    <div class="metric"><span class="label">🌡️ Temperature:</span> <span id="temperature" class="value">Loading...</span> °C</div>
+    <div class="metric"><span class="label">💧 Humidity:</span> <span id="humidity" class="value">Loading...</span> %</div>
+    <div class="metric"><span class="label">💡 Light Condition:</span> <span id="lightcondition" class="value">Loading...</span></div>
+    <div class="metric"><span class="label">🔎 Light Sensor Raw:</span> <span id="ldrraw" class="value">Loading...</span></div>
+    <div class="metric"><span class="label">📈 Light Percentage:</span> <span id="ldrpercent" class="value">Loading...</span> %</div>
   </div>
 
   <!-- Firebase SDK -->
@@ -88,38 +95,16 @@
     const db = getDatabase(app);
     const roomGuardianRef = ref(db, 'RoomGuardian');
 
-    const dashboardCard = document.getElementById("dashboardCard");
-
     onValue(roomGuardianRef, (snapshot) => {
       const data = snapshot.val();
       if (!data) return;
 
-      // Update values
       document.getElementById("distance").innerText = data.Distance;
       document.getElementById("temperature").innerText = data.Temperature;
       document.getElementById("humidity").innerText = data.Humidity;
       document.getElementById("lightcondition").innerText = data.LightCondition;
       document.getElementById("ldrraw").innerText = data.LDR_Raw;
       document.getElementById("ldrpercent").innerText = data.LDR_Percent;
-
-      // Reset background
-      dashboardCard.className = "card";
-
-      // Alerts
-      if (data.Temperature > 35 || data.Humidity > 80 || data.Distance < 20) {
-        dashboardCard.classList.add("high-alert");
-        if (data.Temperature > 35) {
-          alert("🔥 High temperature alert!");
-        }
-        if (data.Humidity > 80) {
-          alert("💧 High humidity alert!");
-        }
-        if (data.Distance < 20) {
-          alert("📏 Someone very close to the guardian!");
-        }
-      } else if (data.Temperature > 30 || data.Humidity > 70) {
-        dashboardCard.classList.add("alert");
-      }
     });
   </script>
 </body>
