@@ -1,86 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <title>Room Guardian Dashboard</title>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f0f2f5;
-      margin: 0;
-      padding: 20px;
+      padding: 30px;
     }
-
     h1 {
       text-align: center;
-      font-size: 1.8em;
-      margin-bottom: 20px;
     }
-
     .card {
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin: 0 auto;
+      margin: 20px auto;
       max-width: 400px;
     }
-
     .metric {
-      font-size: 1.1em;
-      margin: 12px 0;
-      display: flex;
-      justify-content: space-between;
+      font-size: 1.2em;
+      margin: 10px 0;
     }
-
-    span.label {
-      color: #333;
-    }
-
     span.value {
       font-weight: bold;
       color: #007bff;
-    }
-
-    @media (max-width: 500px) {
-      .card {
-        padding: 16px;
-      }
-
-      .metric {
-        font-size: 1em;
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .metric span.value {
-        margin-top: 4px;
-        font-size: 1.1em;
-      }
-
-      h1 {
-        font-size: 1.5em;
-      }
     }
   </style>
 </head>
 <body>
   <h1>Room Guardian Dashboard</h1>
   <div class="card">
-    <div class="metric"><span class="label">📏 Proximity:</span> <span id="distance" class="value">Loading...</span> cm</div>
-    <div class="metric"><span class="label">🌡️ Temperature:</span> <span id="temperature" class="value">Loading...</span> °C</div>
-    <div class="metric"><span class="label">💧 Humidity:</span> <span id="humidity" class="value">Loading...</span> %</div>
-    <div class="metric"><span class="label">💡 Light Condition:</span> <span id="lightcondition" class="value">Loading...</span></div>
-    <div class="metric"><span class="label">🔎 Light Sensor Raw:</span> <span id="ldrraw" class="value">Loading...</span></div>
-    <div class="metric"><span class="label">📈 Light Percentage:</span> <span id="ldrpercent" class="value">Loading...</span> %</div>
+    <div class="metric">📏 Proximity to Gaurdian: <span id="distance" class="value">Loading...</span> cm</div>
+    <div class="metric">🌡️ Temperature: <span id="temperature" class="value">Loading...</span> °C</div>
+    <div class="metric">💧 Humidity: <span id="humidity" class="value">Loading...</span> %</div>
+    <div class="metric">💡 Light Condition: <span id="lightcondition" class="value">Loading...</span></div>
+    <div class="metric">🔎 Light Sensor Raw: <span id="ldrraw" class="value">Loading...</span></div>
+    <div class="metric">📈 Light Percentage: <span id="ldrpercent" class="value">Loading...</span> %</div>
   </div>
 
   <!-- Firebase SDK -->
   <script type="module">
+    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+    // Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyBZ1pNJfoR3PU0Ngk_Bfg_MFGiS0jjMh6Y",
       authDomain: "roomgaurdianv2.firebaseapp.com",
@@ -91,20 +58,24 @@
       appId: "1:496136929714:web:99f1fded9812ccf3bae4ab"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+
     const roomGuardianRef = ref(db, 'RoomGuardian');
 
     onValue(roomGuardianRef, (snapshot) => {
       const data = snapshot.val();
-      if (!data) return;
-
-      document.getElementById("distance").innerText = data.Distance;
-      document.getElementById("temperature").innerText = data.Temperature;
-      document.getElementById("humidity").innerText = data.Humidity;
-      document.getElementById("lightcondition").innerText = data.LightCondition;
-      document.getElementById("ldrraw").innerText = data.LDR_Raw;
-      document.getElementById("ldrpercent").innerText = data.LDR_Percent;
+      if (data) {
+        document.getElementById("distance").innerText = data.Distance;
+        document.getElementById("temperature").innerText = data.Temperature;
+        document.getElementById("humidity").innerText = data.Humidity;
+        document.getElementById("lightcondition").innerText = data.LightCondition;
+        document.getElementById("ldrraw").innerText = data.LDR_Raw;
+        document.getElementById("ldrpercent").innerText = data.LDR_Percent;
+      } else {
+        console.log("No data available");
+      }
     });
   </script>
 </body>
